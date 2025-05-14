@@ -86,14 +86,21 @@ function getNickname(req, res) {
 
 function getPopulation(req, res) {
   const data = getStateData(req.params.state);
-  if (!data) return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
-  return res.json({ state: data.state, population: data.population });
+  if (!data) {
+    return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
+  }
+  // Format population with commas
+  const popStr = data.population.toLocaleString('en-US');
+  return res.json({ state: data.state, population: popStr });
 }
 
 function getAdmission(req, res) {
   const data = getStateData(req.params.state);
-  if (!data) return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
-  return res.json({ state: data.state, admission: data.admission_date });
+  if (!data) {
+    return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
+  }
+  // Use the key 'admitted' per spec
+  return res.json({ state: data.state, admitted: data.admission_date });
 }
 
 // POST /states/:state/funfact
