@@ -1,40 +1,60 @@
+// server.js
 require('dotenv').config();
 const express = require('express');
-const app = express();
 const mongoose = require('mongoose');
 const path = require('path');
 
-// Connect to MongoDB
-mongoose.connect(process.env.DATABASE_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true
-});
-mongoose.connection.on('error', err => {
-    console.error('MongoDB connection error:', err);
-});
-mongoose.connection.once('open', () => {
-    console.log('Connected to MongoDB');
-});
+const app = express();
 
-// Parse JSON request bodies
+// ——— Connect to MongoDB ———
+mongoose.connect(process.env.DATABASE_URI, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true
+})
+.catch(err => {
+  console.error('MongoDB connection error:', err);
+});
+mongoose.connection.once('open', () =>
+  console.log('Connected to MongoDB')
+);
+
+// ——— Middleware ———
+// Parse JSON bodies
 app.use(express.json());
 
-// Serve static index.html at root
-app.use(express.static(path.join(__dirname)));
+// ——— Routes ———
 
-// API routes under /states
-app.use('/states', require('./routes/states'));
-
-// Catch-all 404 handler
-app.all('*', (req, res) => {
-  if (req.accepts('html')) {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
-  } else if (req.accepts('json')) {
-    res.status(404).json({ error: '404 Not Found' });
-  } else {
-    res.status(404).type('txt').send('404 Not Found');
-  }
+// GET / → Serve your index.html
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'index.html'));
 });
 
+// All API endpoints under /states
+app.use('/states', require('./routes/states'));
+
+// ——— Catch‐all 404 ———
+app.all('*', (req, res) => {
+  if (req.accepts('html')) {
+    // HTML 404 page
+    return res
+      .status(404)
+      .sendFile(path.join(__dirname, 'views', '404.html'));
+  }
+  if (req.accepts('json')) {
+    // JSON 404 error
+    return res
+      .status(404)
+      .json({ error: '404 Not Found' });
+  }
+  // Plain‐text fallback
+  res
+    .status(404)
+    .type('txt')
+    .send('404 Not Found');
+});
+
+// ——— Start Server ———
 const PORT = process.env.PORT || 3500;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
