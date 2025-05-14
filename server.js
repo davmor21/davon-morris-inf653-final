@@ -33,5 +33,13 @@ app.all('*', (req, res) => {
     }
 });
 
+const path = require('path');
+
+// Serve root HTML page
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'views', 'index.html'));
+});
+
+
 const PORT = process.env.PORT || 3500;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
