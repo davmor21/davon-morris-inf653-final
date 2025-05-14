@@ -16,18 +16,16 @@ mongoose.connection.once('open', () => {
     console.log('Connected to MongoDB');
 });
 
-// JSON parser
+// Parse JSON request bodies
 app.use(express.json());
 
-// 1) Root HTML page
-app.get('/', (req, res) => {
-  res.sendFile(path.join(__dirname, 'views', 'index.html'));
-});
+// Serve static index.html at root
+app.use(express.static(path.join(__dirname)));
 
-// 2) API routes
+// API routes under /states
 app.use('/states', require('./routes/states'));
 
-// 3) Catch-all 404
+// Catch-all 404 handler
 app.all('*', (req, res) => {
   if (req.accepts('html')) {
     res.status(404).sendFile(path.join(__dirname, 'views', '404.html'));
