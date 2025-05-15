@@ -1,11 +1,14 @@
-// server.js
 require('dotenv').config();
 const express = require('express');
+const cors = require('cors');        // <<–– import cors
 const mongoose = require('mongoose');
 const path = require('path');
 const statesRouter = require('./routes/states');
 
 const app = express();
+
+app.use(cors());                    // <<–– enable CORS globally
+app.use(express.json());
 
 // ——— Connect to MongoDB ———
 mongoose.set('strictQuery', false);

@@ -89,7 +89,7 @@ function getPopulation(req, res) {
   if (!data) {
     return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
   }
-  // Format population with commas
+  // Format as comma-separated string
   const popStr = data.population.toLocaleString('en-US');
   return res.json({ state: data.state, population: popStr });
 }
@@ -99,7 +99,7 @@ function getAdmission(req, res) {
   if (!data) {
     return res.status(400).json({ message: 'Invalid state abbreviation parameter' });
   }
-  // Use the key 'admitted' per spec
+  // Use the key “admitted”
   return res.json({ state: data.state, admitted: data.admission_date });
 }
 
